@@ -82,6 +82,42 @@ python3 macrecovery.py -b Mac-7BA5B2D9E42DDD94 -m 00000000000000000 download
 
 ---
 
+## 把核显显存（UMA Frame Buffer）改成 4GB
+
+macOS 下核显能用多少显存，是由 BIOS 里的 **UMA Frame Buffer Size** 决定的。华硕的 BIOS 界面
+**不暴露这一项**，默认可能只有 512MB，NootedRed 就会出现「显示器 8MB」、界面卡顿、花屏之类的问题。
+
+用 [DavidS95/Smokeless_UMAF](https://github.com/DavidS95/Smokeless_UMAF) 可以在**不刷 BIOS** 的前提下
+读取出 AMD CBS 隐藏菜单，把显存调到 4GB，核显会明显更流畅。
+
+### 操作步骤
+
+1. 准备一个 **FAT32** 格式的 U 盘（≥1GB 即可，里面数据会被清空）。
+2. 在项目页面下载 [`UniversalAMDFormBrowser.zip`](https://github.com/DavidS95/Smokeless_UMAF/raw/main/UniversalAMDFormBrowser.zip)
+   （正式版，约 150KB；仓库里另有 `UMAF_BETA.zip` 测试版，建议先用正式版）。
+3. 把压缩包**解压到 U 盘根目录**（解压出来是个 `Boot` 文件夹，直接放在根目录）。
+4. 插上 U 盘重启，开机连按 **Esc**（或 F8）调出启动菜单，选 **UEFI: 你的U盘**。
+5. 进入工具界面后依次点：
+   **Device Manager** → **AMD CBS**（部分机器在 AMD PBS 里）
+   → **NBIO Common Options** → **GFX Configuration** → **UMA Frame Buffer Size**
+6. 把值改成 **4G**（列表通常是 Auto / 64M / 128M / 256M / 512M / 1G / 2G / 4G / 8G）。
+   改之前先把原始值记下来，方便恢复。
+7. 按 **Esc** 一路退出，出现保存提示时选 **保存 / Yes**，然后重启。
+8. 验证：macOS「关于本机 → 系统报告 → 图形卡」里的显存应接近 4GB；Windows 可在任务管理器
+   → 性能 → GPU 里查看。
+
+### 注意
+
+- **这是真实的 BIOS 设置，改错可能开不了机。** 只动 `UMA Frame Buffer Size` 这一项，
+  不要碰 `Curve Optimizer`、`P0State Vid` 之类——项目作者把这两项明确列为危险设置。
+  万一改坏：先试清 BIOS（断电 / CLR_CMOS），严重时只能重新刷 BIOS。
+- 显存是从内存里划走的：设成 4GB，系统可用内存就少 4GB（16GB 的机器剩 12GB 左右）。
+  如果内存只有 8GB，建议设 2G。
+- 个别机器的 BIOS 会在下次开机把这项重置为默认，装完系统后回头确认一次。
+- 该工具原始作者是 **SmokelessCPU**，DavidS95 的仓库是备份仓库；使用风险自负。
+
+---
+
 ## 已知限制
 
 1. RTX 2060 永远用不了；HDMI 走核显可用，Type-C/DP 走独显所以不可用。
@@ -101,6 +137,7 @@ python3 macrecovery.py -b Mac-7BA5B2D9E42DDD94 -m 00000000000000000 download
 - 无线/蓝牙：OpenIntelWireless（itlwm、IntelBluetoothFirmware）
 - 有线网卡：Mieze/RTL8111_driver_for_OS_X
 - ACPI 与 USB 端口映射：参考同型号开源项目 Lyianu/FA506IV-OpenCore，并按 OpenCore 1.0.7 重新整理
+- 显存解锁（UMA Frame Buffer Size）：[DavidS95/Smokeless_UMAF](https://github.com/DavidS95/Smokeless_UMAF)（原项目 SmokelessCPU）
 
 ## 声明
 
