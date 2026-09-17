@@ -99,11 +99,14 @@ macOS 下核显能用多少显存，是由 BIOS 里的 **UMA Frame Buffer Size**
 4. 插上 U 盘重启，开机连按 **Esc**（或 F8）调出启动菜单，选 **UEFI: 你的U盘**。
 5. 进入工具界面后依次点：
    **Device Manager** → **AMD CBS**（部分机器在 AMD PBS 里）
-   → **NBIO Common Options** → **GFX Configuration** → **UMA Frame Buffer Size**
-6. 把值改成 **4G**（列表通常是 Auto / 64M / 128M / 256M / 512M / 1G / 2G / 4G / 8G）。
+   → **NBIO Common Options** → **GFX Configuration**
+6. **关键一步**：在 `GFX Configuration` 里把 **iGPU Configuration** 从 `Auto` 改成 **`UMA_SPECIFIED`**。
+   默认的 `Auto` 会把它藏起来，改成 `UMA_SPECIFIED` 之后，下面才会出现
+   **`UMA Frame Buffer Size`** 这一项。
+7. 把 **UMA Frame Buffer Size** 选成 **4G**（列表通常是 64M / 128M / 256M / 512M / 1G / 2G / 4G / 8G）。
    改之前先把原始值记下来，方便恢复。
-7. 按 **Esc** 一路退出，出现保存提示时选 **保存 / Yes**，然后重启。
-8. 验证：macOS「关于本机 → 系统报告 → 图形卡」里的显存应接近 4GB；Windows 可在任务管理器
+8. 按 **Esc** 一路退出，出现保存提示时选 **保存 / Yes**，然后重启。
+9. 验证：macOS「关于本机 → 系统报告 → 图形卡」里的显存应接近 4GB；Windows 可在任务管理器
    → 性能 → GPU 里查看。
 
 ### 注意
@@ -114,6 +117,8 @@ macOS 下核显能用多少显存，是由 BIOS 里的 **UMA Frame Buffer Size**
 - 显存是从内存里划走的：设成 4GB，系统可用内存就少 4GB（16GB 的机器剩 12GB 左右）。
   如果内存只有 8GB，建议设 2G。
 - 个别机器的 BIOS 会在下次开机把这项重置为默认，装完系统后回头确认一次。
+- 如果在 `GFX Configuration` 里找不到 `iGPU Configuration`，退回上一层 `NBIO Common Options`
+  再翻一遍其他子项；不同 BIOS 版本的层级摆放会有差别。
 - 该工具原始作者是 **SmokelessCPU**，DavidS95 的仓库是备份仓库；使用风险自负。
 
 ---
