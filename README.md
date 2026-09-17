@@ -111,8 +111,9 @@ macOS 下核显能用多少显存，是由 BIOS 里的 **UMA Frame Buffer Size**
 
 ### 注意
 
-- **这是真实的 BIOS 设置，改错可能开不了机。** 只动 `UMA Frame Buffer Size` 这一项，
-  不要碰 `Curve Optimizer`、`P0State Vid` 之类——项目作者把这两项明确列为危险设置。
+- **这是真实的 BIOS 设置，改错可能开不了机。** 只动 `iGPU Configuration` 和
+  `UMA Frame Buffer Size` 这两项，不要碰 `Curve Optimizer`、`P0State Vid` 之类
+  ——项目作者把这两项明确列为危险设置。
   万一改坏：先试清 BIOS（断电 / CLR_CMOS），严重时只能重新刷 BIOS。
 - 显存是从内存里划走的：设成 4GB，系统可用内存就少 4GB（16GB 的机器剩 12GB 左右）。
   如果内存只有 8GB，建议设 2G。
