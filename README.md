@@ -22,7 +22,7 @@ OpenCore 引导配置，目标是 macOS Sonoma 14.x。
 | 无线网卡 | Intel AX210 | 可用（AirportItlwm），6GHz 不可用 |
 | 蓝牙 | Intel AX210 | 可用 |
 | 声卡 | Realtek ALC256 | 可用，`alcid=23` |
-| 触控板 | I2C HID | 基本可用，多指手势可能不全 |
+| 触控板 | I2C HID | 基本可用，多指手势可用 |
 | 键盘 | PS/2 | 可用，Fn 亮度/音量键可用 |
 | 硬盘 | KIOXIA NVMe | 可用，附 NVMeFix |
 
