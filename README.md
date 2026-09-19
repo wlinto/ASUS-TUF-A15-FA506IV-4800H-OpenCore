@@ -34,11 +34,12 @@ OpenCore 引导配置，目标是 macOS Sonoma 14.x。
 .
 ├─ EFI-Final/EFI/          ← 装好系统后日常使用（NootedRed 核显加速）
 ├─ EFI-Install/EFI/        ← 安装 / 大版本升级 macOS 时使用（WhateverGreen 代替 NootedRed）
-├─ 修复配置/               ← 4 套备用 config.plist，按现象替换使用
+├─ 修复配置/               ← 5 套备用 config.plist，按现象替换使用
 │   ├─ 1-关闭安全启动模拟/
 │   ├─ 2-再加官方AMD引导参数/
 │   ├─ 3-老固件内存组合/
-│   └─ 4-蓝牙排查-暂时停用USB端口映射/
+│   ├─ 4-蓝牙排查-暂时停用USB端口映射/
+│   └─ 5-重启后扬声器无声-加alcdelay/
 ├─ 可选驱动/itlwm.kext      ← 只有装 macOS 15 (Sequoia) 时才需要
 ├─ 小工具/修复Windows时间.ps1
 └─ 使用说明.md
@@ -131,6 +132,29 @@ macOS 下核显能用多少显存，是由 BIOS 里的 **UMA Frame Buffer Size**
 3. 睡眠：同型号记录是「能睡，偶尔立即唤醒」。
 4. Wi-Fi 6GHz 不可用（AX210 的 6E 只能当 2.4/5G 用）。
 5. NootedRed 在 Sonoma 上有已知偶发卡顿/崩溃。
+
+---
+
+## 声音：热重启后内置扬声器无声（已修复）
+
+ASUS 这块 ALC256 有个特性：**整机彻底断电后的冷启动**扬声器正常，但**普通重启几次之后**
+内置扬声器会无声；耳机始终正常，同一个机器在 Windows 下也一直正常（Realtek 驱动每次都会
+重设 codec 状态）。
+
+原因是 macOS 侧 AppleALC / AppleHDA 把 codec 配置（含扬声器功放使能）写进 codec 的时机，
+抢在热重启后功放 / EC 就绪之前，配置没落到扬声器通路上。注意这**与 layout-id 无关**：
+`alcid=23` 一直是可用的（AppleALC 的 layout 23 与 AppleHDA 自带的 layout 7，pin 数据相同）。
+
+解决办法是给初始化留出时间，在 `NVRAM → Add → 7C436110-…` 的 `boot-args` 末尾附近加一项：
+
+```
+keepsyms=1 alcid=23 alcdelay=1500 npci=0x2000 revblock=media -NRedDPDelay
+                          ↑ 新增（单位毫秒，AppleALC 上限 3000）
+```
+
+`EFI-Final/` 与 `修复配置/5-重启后扬声器无声-加alcdelay/` 里都已经带上这一项。
+以后 macOS 大版本/安全更新后若复发，把 1500 依次往上调 2000 → 2500 → 3000 再试；
+临时应急可以直接**关机再开机**（不要用重启）。
 
 ---
 
