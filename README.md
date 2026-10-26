@@ -8,7 +8,8 @@ OpenCore 引导配置，目标是 macOS Sonoma 14.x。
 - 平台机型：`MacBookPro16,2`（**SMBIOS 三码已清空，请自行生成，见下文**）
 
 完整的装机步骤、排错对照表和已知限制请看 **[使用说明.md](使用说明.md)**。
-![关于本机](./About This Mac.png)
+
+![关于本机](https://github.com/wlinto/ASUS-TUF-A15-FA506IV-4800H-OpenCore/blob/main/About%20This%20Mac.png)
 
 ---
 
